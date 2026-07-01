@@ -12,101 +12,161 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: #333;
         }
-        .card {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
+        
+        /* LOGIN CARD (Kept narrow) */
+        #loginSection {
+            background-color: #ffffff; padding: 30px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
+            width: 90%; max-width: 400px;
         }
+        
+        /* EXAM CONTAINER (Wide, Split-screen) */
+        #examSection {
+            display: none;
+            background-color: #ffffff; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 95%; max-width: 1000px;
+            overflow: hidden; /* Contains the children */
+        }
+        
+        .exam-layout {
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* LEFT PANEL: Working Area */
+        .left-panel {
+            flex: 2;
+            padding: 30px;
+        }
+        
+        /* RIGHT PANEL: Navigation Grid */
+        .right-panel {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-left: 2px solid #e0e0e0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
         h2 { color: #165430; margin-bottom: 5px; }
+        h3 { margin-top: 0; color: #165430; border-bottom: 2px solid #165430; padding-bottom: 10px; }
         p.subtitle { color: #666; margin-bottom: 20px; font-size: 14px; }
         
-        input {
-            width: 90%; padding: 12px; margin-bottom: 20px;
-            border: 2px solid #e0e0e0; border-radius: 8px;
-            font-size: 18px; text-align: center;
+        input[type="number"] {
+            width: 100%; padding: 12px; margin-bottom: 20px; box-sizing: border-box;
+            border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px; text-align: center;
         }
+        
         button {
-            background-color: #f36621; color: white; border: none;
-            padding: 14px; width: 100%; border-radius: 8px;
-            font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            background-color: #f36621; color: white; border: none; padding: 14px; 
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         button:hover { background-color: #d8571a; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* Exam Interface Styles */
-        #examSection { display: none; }
         .header-bar {
             display: flex; justify-content: space-between; align-items: center;
-            background-color: #165430; color: white; padding: 10px 15px;
-            border-radius: 8px; margin-bottom: 20px;
+            background-color: #165430; color: white; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px;
         }
         .timer { font-size: 20px; font-weight: bold; color: #f36621; }
         
         /* The Vertical Math Display */
         .math-container {
-            font-size: 28px; font-family: monospace; font-weight: bold;
+            font-size: 32px; font-family: monospace; font-weight: bold;
             display: flex; flex-direction: column; align-items: flex-end;
-            width: 120px; margin: 0 auto 20px auto; line-height: 1.5;
+            width: 140px; margin: 0 auto 30px auto; line-height: 1.5;
         }
-        .math-line { border-top: 3px solid #333; width: 100%; margin-top: 5px; margin-bottom: 10px; }
+        .math-line { border-top: 4px solid #333; width: 100%; margin-top: 5px; margin-bottom: 15px; }
         
-        .nav-buttons { display: flex; justify-content: space-between; gap: 10px; }
+        .nav-buttons { display: flex; justify-content: space-between; gap: 15px; }
         .nav-buttons button { width: 48%; background-color: #333; }
         .nav-buttons button:hover { background-color: #555; }
-        .submit-btn { background-color: #165430; margin-top: 15px; }
+        
+        /* GRID STYLES */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-bottom: 20px; flex-grow: 1; align-content: start;
+        }
+        .grid-btn {
+            background-color: #fff; color: #333; border: 2px solid #ccc;
+            padding: 10px 0; font-size: 14px; border-radius: 6px;
+        }
+        .grid-btn:hover { background-color: #e0e0e0; }
+        .grid-btn.answered { background-color: #165430; color: white; border-color: #165430; }
+        .grid-btn.current { border-color: #f36621; color: #f36621; font-weight: bold; box-shadow: 0 0 5px rgba(243,102,33,0.5); }
+        
+        .submit-btn { background-color: #165430; width: 100%; margin-top: auto; }
         .submit-btn:hover { background-color: #0f3d22; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .exam-layout { flex-direction: column; }
+            .right-panel { border-left: none; border-top: 2px solid #e0e0e0; padding: 20px; }
+            .grid-container { grid-template-columns: repeat(5, 1fr); }
+            #examSection { margin-top: 20px; margin-bottom: 20px; }
+        }
     </style>
 </head>
 <body>
 
     <!-- LOGIN SCREEN -->
-    <div class="card" id="loginSection">
+    <div id="loginSection">
         <h2>Aneya Abacus</h2>
         <p class="subtitle">Daily Revision Portal</p>
         <input type="number" id="mobileInput" placeholder="Enter Mobile Number">
-        <button id="loginBtn" onclick="login()">Start Exam</button>
+        <button id="loginBtn" onclick="login()" style="width: 100%;">Start Exam</button>
         <p id="message" style="color: red; margin-top: 15px; display: none;"></p>
     </div>
 
     <!-- EXAM SCREEN -->
-    <div class="card" id="examSection">
-        <div class="header-bar">
-            <span id="studentNameDisplay">Student</span>
-            <span class="timer" id="timerDisplay">15:00</span>
-        </div>
-        
-        <h3 style="color: #666;">Question <span id="currentQNum">1</span> of <span id="totalQNum">30</span></h3>
-        
-        <div class="math-container" id="mathDisplay">
-            <!-- Numbers will be injected here vertically -->
-        </div>
+    <div id="examSection">
+        <div class="exam-layout">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <div class="header-bar">
+                    <span id="studentNameDisplay">Student</span>
+                    <span class="timer" id="timerDisplay">15:00</span>
+                </div>
+                
+                <h4 style="color: #666; margin-top: 0;">Question <span id="currentQNum">1</span> of <span id="totalQNum">30</span></h4>
+                
+                <div class="math-container" id="mathDisplay">
+                    <!-- Numbers inject here -->
+                </div>
 
-        <input type="number" id="answerInput" placeholder="Your Answer">
-        
-        <div class="nav-buttons">
-            <button onclick="prevQuestion()">Previous</button>
-            <button onclick="nextQuestion()">Next</button>
+                <input type="number" id="answerInput" placeholder="Your Answer">
+                
+                <div class="nav-buttons">
+                    <button onclick="prevQuestion()">Previous</button>
+                    <button onclick="nextQuestion()">Save & Next</button>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <h3>Question Palette</h3>
+                <div class="grid-container" id="qGrid">
+                    <!-- Grid buttons inject here -->
+                </div>
+                <button class="submit-btn" onclick="submitExam()">Submit Exam</button>
+            </div>
         </div>
-        
-        <button class="submit-btn" onclick="submitExam()">Submit Exam</button>
     </div>
 
     <script>
         // BESTIE, PASTE YOUR GOOGLE SCRIPT URL RIGHT HERE BELOW
-        const API_URL = "https://script.google.com/macros/s/AKfycbwCkVwFtVjdvGlRY5BqCwfxkQGMgpAq-fJpuyze3d6ANilRm2LW8QI-ITuw5zT8CfJg/exec";
+        const API_URL = "PASTE_YOUR_COPIED_URL_HERE";
         
         let studentData = {};
         let questions = [];
         let currentIndex = 0;
-        let answers = {}; // Store student answers
-        let timeLeft = 900; // 15 minutes in seconds
+        let answers = {}; 
+        let timeLeft = 900; 
         let timerInterval;
 
         async function login() {
@@ -116,18 +176,15 @@
             
             if(!mobile) { msgBox.style.display = "block"; msgBox.innerText = "Please enter your number!"; return; }
 
-            msgBox.style.display = "block"; msgBox.style.color = "#165430"; msgBox.innerText = "Authenticating & Loading Questions...";
+            msgBox.style.display = "block"; msgBox.style.color = "#165430"; msgBox.innerText = "Authenticating & Loading...";
             loginBtn.disabled = true;
 
             try {
-                // 1. Login
                 let response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "login", mobile: mobile }) });
                 let data = await response.json();
                 
                 if(data.success) {
                     studentData = data;
-                    
-                    // 2. Fetch Questions based on their level
                     let qResponse = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getQuestions", level: studentData.level }) });
                     let qData = await qResponse.json();
                     
@@ -154,10 +211,32 @@
             document.getElementById('studentNameDisplay').innerText = studentData.name;
             document.getElementById('totalQNum').innerText = questions.length;
             
+            buildGrid();
             loadQuestion(0);
             
-            // Start the 15 Min Timer
             timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function buildGrid() {
+            let gridHTML = "";
+            for(let i = 0; i < questions.length; i++) {
+                gridHTML += `<button class="grid-btn" id="btn-q${i}" onclick="jumpToQuestion(${i})">${i + 1}</button>`;
+            }
+            document.getElementById('qGrid').innerHTML = gridHTML;
+        }
+
+        function updateGridUI() {
+            for(let i = 0; i < questions.length; i++) {
+                let btn = document.getElementById(`btn-q${i}`);
+                btn.classList.remove('current', 'answered');
+                
+                if(answers[i] && answers[i] !== "") {
+                    btn.classList.add('answered');
+                }
+                if(i === currentIndex) {
+                    btn.classList.add('current');
+                }
+            }
         }
 
         function loadQuestion(index) {
@@ -165,9 +244,8 @@
             currentIndex = index;
             
             document.getElementById('currentQNum').innerText = currentIndex + 1;
-            document.getElementById('answerInput').value = answers[currentIndex] || ""; // Load saved answer if any
+            document.getElementById('answerInput').value = answers[currentIndex] || ""; 
             
-            // Format the string "12, 15, -4" into vertical HTML
             let sumString = questions[currentIndex].sum;
             let numbersArray = sumString.split(',');
             let mathHTML = "";
@@ -178,12 +256,21 @@
             mathHTML += `<div class="math-line"></div>`;
             
             document.getElementById('mathDisplay').innerHTML = mathHTML;
+            document.getElementById('answerInput').focus();
+            updateGridUI();
+        }
+
+        function jumpToQuestion(index) {
+            saveAnswer();
+            loadQuestion(index);
         }
 
         function nextQuestion() {
             saveAnswer();
             if(currentIndex < questions.length - 1) {
                 loadQuestion(currentIndex + 1);
+            } else {
+                updateGridUI(); // Update UI even if at the end
             }
         }
 
@@ -191,6 +278,8 @@
             saveAnswer();
             if(currentIndex > 0) {
                 loadQuestion(currentIndex - 1);
+            } else {
+                updateGridUI();
             }
         }
 
@@ -213,8 +302,7 @@
         function submitExam() {
             saveAnswer();
             clearInterval(timerInterval);
-            // We will build the submission logic tomorrow!
-            alert("Exam Submitted! (Backend grading coming soon)");
+            alert("Exam Submitted! (Backend grading logic next)");
         }
     </script>
 </body>
