@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aneya Abacus | Student Portal</title>
+    <style>
+        body {
+            background-color: #165430; /* The Aneya Green */
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 320px;
+        }
+        .login-card h2 {
+            color: #165430;
+            margin-bottom: 5px;
+        }
+        .login-card p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            background-color: #f36621; /* The Aneya Orange */
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #d8571a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2>Aneya Abacus</h2>
+        <p>Daily Revision Portal</p>
+        <input type="number" id="mobileInput" placeholder="Enter Mobile Number">
+        <button onclick="login()">Login</button>
+        <p id="message" style="color: red; margin-top: 15px; display: none;"></p>
+    </div>
+
+    <script>
+        // BESTIE, PASTE YOUR GOOGLE SCRIPT URL RIGHT HERE BELOW
+        const API_URL = "https://script.google.com/macros/s/AKfycbwCkVwFtVjdvGlRY5BqCwfxkQGMgpAq-fJpuyze3d6ANilRm2LW8QI-ITuw5zT8CfJg/exec";
+
+        async function login() {
+            const mobile = document.getElementById('mobileInput').value;
+            const msgBox = document.getElementById('message');
+            
+            if(!mobile) {
+                msgBox.style.display = "block";
+                msgBox.innerText = "Please enter your number!";
+                return;
+            }
+
+            msgBox.style.display = "block";
+            msgBox.style.color = "#165430";
+            msgBox.innerText = "Checking...";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "login", mobile: mobile })
+                });
+                
+                const data = await response.json();
+                
+                if(data.success) {
+                    msgBox.style.color = "green";
+                    msgBox.innerText = "Welcome back, " + data.name + "!";
+                    // Tomorrow we add the code here to send them to the exam screen!
+                } else {
+                    msgBox.style.color = "red";
+                    msgBox.innerText = "Number not found. Try again!";
+                }
+            } catch (e) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "System error. Tell Ishaan to fix it! 💅";
+            }
+        }
+    </script>
+</body>
+</html>
