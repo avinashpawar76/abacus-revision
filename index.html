@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aneya Abacus | Daily Revision</title>
+    <title>Aneya Abacus Katraj, Pune | Daily Revision</title>
     <style>
         body {
             background-color: #165430; font-family: 'Arial', sans-serif; margin: 0;
@@ -41,6 +41,12 @@
             width: 100%; padding: 12px; margin-bottom: 20px; box-sizing: border-box;
             border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px; text-align: center;
         }
+
+        /* Password Wrapper for Eye Icon */
+        .password-container { position: relative; width: 100%; }
+        .eye-icon {
+            position: absolute; right: 15px; top: 12px; font-size: 20px; cursor: pointer; color: #666; user-select: none;
+        }
         
         button {
             background-color: #f36621; color: white; border: none; padding: 14px; 
@@ -55,11 +61,13 @@
         }
         .timer { font-size: 20px; font-weight: bold; color: #f36621; }
         
+        /* Updated Math Container for Centering */
         .math-container {
             font-size: 32px; font-family: monospace; font-weight: bold; display: flex; flex-direction: column;
-            align-items: flex-end; width: 140px; margin: 0 auto 30px auto; line-height: 1.5;
+            align-items: center; width: 100%; margin: 0 auto 30px auto; line-height: 1.5;
         }
-        .math-line { border-top: 4px solid #333; width: 100%; margin-top: 5px; margin-bottom: 15px; }
+        .math-numbers { display: flex; flex-direction: column; align-items: flex-end; width: 120px; }
+        .math-line { border-top: 4px solid #333; width: 120px; margin-top: 5px; margin-bottom: 15px; }
         
         .nav-buttons { display: flex; justify-content: space-between; gap: 15px; }
         .nav-buttons button { width: 48%; background-color: #333; }
@@ -74,7 +82,6 @@
         .grid-btn.current { border-color: #f36621; font-weight: bold; box-shadow: 0 0 5px rgba(243,102,33,0.5); }
         
         .submit-btn { background-color: #165430; width: 100%; margin-top: auto; }
-        
         .score-display { font-size: 48px; font-weight: bold; color: #f36621; margin: 20px 0; }
         
         @media (max-width: 768px) {
@@ -85,16 +92,19 @@
 </head>
 <body>
 
-    <!-- PAGE 1: LOGIN -->
     <div id="loginSection" class="card">
-        <h2>Aneya Abacus</h2>
+        <h2>Aneya Abacus<br><span style="font-size: 18px; color: #f36621;">Katraj, Pune</span></h2>
         <input type="number" id="mobileInput" placeholder="Mobile Number">
-        <input type="password" id="passwordInput" placeholder="Password (Mobile No.)">
-        <button id="loginBtn" onclick="login()" style="width: 100%;">Secure Login</button>
+        
+        <div class="password-container">
+            <input type="password" id="passwordInput" placeholder="Password">
+            <span class="eye-icon" onclick="togglePassword()">👁️</span>
+        </div>
+        
+        <button id="loginBtn" onclick="login()" style="width: 100%;">Login</button>
         <p id="message" style="color: red; margin-top: 15px; display: none;"></p>
     </div>
 
-    <!-- PAGE 2: INSTRUCTIONS & LEVEL SELECT -->
     <div id="instructionSection" class="card">
         <h2>Welcome, <span id="welcomeName" style="color: #f36621;">Student</span>!</h2>
         <ul class="instructions-list">
@@ -116,14 +126,12 @@
             <option value="7">Level 7</option>
             <option value="8">Level 8</option>
         </select>
-        <button id="fetchBtn" onclick="fetchAndStart()" style="width: 100%;">Load Exam</button>
+        <button id="fetchBtn" onclick="fetchAndStart()" style="width: 100%;">Start Exam</button>
         <p id="instMsg" style="color: red; margin-top: 15px; display: none;"></p>
     </div>
 
-    <!-- PAGE 3: COUNTDOWN -->
     <div id="countdownOverlay">3</div>
 
-    <!-- PAGE 4: EXAM INTERFACE -->
     <div id="examSection">
         <div class="exam-layout">
             <div class="left-panel">
@@ -132,7 +140,12 @@
                     <span class="timer" id="timerDisplay">15:00</span>
                 </div>
                 <h4 id="currentQInfo">Question 1</h4>
-                <div class="math-container" id="mathDisplay"></div>
+                
+                <div class="math-container">
+                    <div class="math-numbers" id="mathDisplay"></div>
+                    <div class="math-line"></div>
+                </div>
+                
                 <input type="number" id="answerInput" placeholder="Your Answer">
                 <div class="nav-buttons">
                     <button onclick="prevQuestion()">Previous</button>
@@ -147,7 +160,6 @@
         </div>
     </div>
     
-    <!-- PAGE 5: RESULTS -->
     <div id="resultSection" class="card">
         <h2>Exam Complete!</h2>
         <p>Your Final Score</p>
@@ -159,6 +171,12 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwCkVwFtVjdvGlRY5BqCwfxkQGMgpAq-fJpuyze3d6ANilRm2LW8QI-ITuw5zT8CfJg/exec";
         let studentData = {}, questions = [], currentIndex = 0, answers = {}, timeLeft = 900, timerInterval;
+
+        function togglePassword() {
+            const pwd = document.getElementById("passwordInput");
+            if (pwd.type === "password") { pwd.type = "text"; } 
+            else { pwd.type = "password"; }
+        }
 
         async function login() {
             const mobile = document.getElementById('mobileInput').value;
@@ -193,7 +211,7 @@
                 
                 if(data.success && data.questions.length > 0) {
                     questions = data.questions;
-                    studentData.chosenLevel = level; // Save what they picked
+                    studentData.chosenLevel = level;
                     startCountdown();
                 } else {
                     msg.style.color = "red"; msg.innerText = "No questions found for Level " + level;
@@ -243,7 +261,7 @@
             document.getElementById('currentQInfo').innerText = `Question ${currentIndex + 1} of ${questions.length}`;
             document.getElementById('answerInput').value = answers[currentIndex] || "";
             let nums = questions[currentIndex].sum.split(',');
-            let html = ""; nums.forEach(n => html += `<div>${n.trim()}</div>`); html += `<div class="math-line"></div>`;
+            let html = ""; nums.forEach(n => html += `<div>${n.trim()}</div>`);
             document.getElementById('mathDisplay').innerHTML = html;
             updateGridUI(); document.getElementById('answerInput').focus();
         }
@@ -276,7 +294,6 @@
                 }
             }
             
-            // Send Score to Backend for Email & Logging
             try {
                 await fetch(API_URL, { 
                     method: 'POST', 
@@ -290,7 +307,7 @@
                         total: questions.length
                     }) 
                 });
-            } catch(e) { console.log("Email trigger failed, but showing score anyway."); }
+            } catch(e) { console.log(e); }
             
             document.getElementById('countdownOverlay').style.display = "none";
             document.getElementById('resultSection').style.display = "block";
