@@ -225,9 +225,11 @@
         let examEndTime = 0, examActive = false, tabSwitches = 0, videoStream = null; 
         let progressChartInstance = null;
 
+        // RESTORED WARNING POPUP
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === 'hidden' && examActive) {
                 tabSwitches++; persistData(); 
+                alert("SECURITY WARNING: Tab switching detected. Your activity is being logged.");
             }
         });
 
@@ -391,7 +393,6 @@
                     for(let i=0; i<pixels.length; i++) diffSum += Math.abs(pixels[i] - avgBright);
                     let variance = diffSum / 2500;
 
-                    // UPDATED: Increased threshold to catch light-colored solid objects
                     if (avgBright < 15 || variance < 12) isBlocked = true; 
                 } catch(e) {}
             }
