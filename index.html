@@ -227,7 +227,7 @@
 
     <script>
         // ==========================================
-        // 1. UPDATE YOUR URL HERE
+        // API URL (UPDATED WITH YOUR NEW LINK)
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbynaiUC4KCIubk1EasL70xVD2iPUmQcVOMd7ANp1W69dIGW0AQFkDgA3nYap2lVuSw-/exec";
         const SECRETS = "ANEYA_KATRAJ_2026_SECURE";
@@ -348,7 +348,6 @@
             } catch(e) { document.getElementById('historyData').innerHTML = "<p style='color:red;'>Error loading data.</p>"; }
         }
 
-        // Generate 4 MCQ options based on the correct answer
         function generateOptions(correctAnswer) {
             let options = new Set();
             let correct = Number(correctAnswer);
@@ -365,19 +364,34 @@
             const level = document.getElementById('levelSelect').value;
             const btn = document.getElementById('fetchBtn'), msg = document.getElementById('instMsg');
             btn.disabled = true; msg.style.display = "block"; msg.innerText = "Connecting secure camera...";
+            
             try {
                 videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                document.getElementById('webcam').srcObject = videoStream; document.getElementById('camera-container').style.display = "block";
-                
+                document.getElementById('webcam').srcObject = videoStream; 
+                document.getElementById('camera-container').style.display = "block";
+            } catch (err) {
+                msg.style.color = "red"; 
+                msg.innerText = "Camera access denied! You must allow camera permissions in your browser settings."; 
+                btn.disabled = false;
+                return; 
+            }
+
+            msg.innerText = "Loading secured questions...";
+            try {
                 let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getQuestions", level: level, apiKey: SECRETS }) });
                 let data = await res.json();
+                
                 if(data.success && data.questions.length > 0) {
-                    // Pre-generate MCQ options for all questions
                     questions = data.questions.map(q => { q.options = generateOptions(q.answer); return q; });
                     studentData.chosenLevel = level; startCountdown();
-                } else { msg.style.color="red"; msg.innerText="No questions found!"; btn.disabled=false; stopCamera(); }
+                } else { 
+                    msg.style.color="red"; msg.innerText="No questions found for this level!"; 
+                    btn.disabled=false; stopCamera(); 
+                }
             } catch (err) {
-                msg.style.color = "red"; msg.innerText = "Camera access denied. You cannot take the exam without camera permission."; btn.disabled = false;
+                msg.style.color = "red"; 
+                msg.innerText = "Database connection failed! Please refresh and try again."; 
+                btn.disabled = false; stopCamera();
             }
         }
 
@@ -447,7 +461,6 @@
             currentIndex = index; document.getElementById('currentQInfo').innerText = `Question ${index+1} of ${questions.length}`;
             let html = ""; questions[index].sum.split(',').forEach(n => html += `<div>${n.trim()}</div>`); document.getElementById('mathDisplay').innerHTML = html;
             
-            // Build the MCQ grid UI dynamically
             let mcqHtml = "";
             let currentAnswer = answers[index];
             questions[index].options.forEach(opt => {
@@ -463,7 +476,6 @@
             answers[currentIndex] = val; persistData();
             loadQuestion(currentIndex); 
             
-            // Auto-next feature
             setTimeout(() => { 
                 if(currentIndex < questions.length - 1) loadQuestion(currentIndex + 1); else updateGridUI(); 
             }, 400); 
